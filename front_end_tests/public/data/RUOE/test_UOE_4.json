@@ -1,0 +1,17 @@
+{
+  "title": "Part 4 - Key Word Transformation",
+  "gaps": [
+    {
+      "id": "q1",
+      "question": "My brother .................................. much now as he did when he was younger.",
+      "keyword": "NEARLY",
+      "answers": ["doesn't earn nearly as"]
+    },
+    {
+      "id": "q2",
+      "question": "She .................................. the report before the meeting.",
+      "keyword": "HAD",
+      "answers": ["had finished"]
+    }
+  ]
+}

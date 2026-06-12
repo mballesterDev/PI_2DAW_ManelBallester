@@ -1,0 +1,29 @@
+# Backend
+__pycache__/
+*.pyc
+db.sqlite3
+venv/
+env/
+.DS_Store
+*.log
+migrations/
+*.sqlite3
+local_settings.py
+
+# Frontend
+node_modules/
+build/
+dist/
+.env
+.env.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

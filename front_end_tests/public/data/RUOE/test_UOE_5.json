@@ -1,0 +1,78 @@
+{
+  "title": "Part 5 – Reading Comprehension",
+  "text": [
+    "Although today chocolate is enjoyed globally as a sweet indulgence, its origins are rooted in a far more complex and culturally significant past. Tracing back over 3,000 years, the earliest records of chocolate consumption come from ancient Mesoamerican civilizations such as the Olmecs, Mayans, and later the Aztecs. For these societies, cacao was far more than a culinary delight: it was deeply intertwined with ritual, economy, and even mythology.",
+    "The cacao beans, harvested from the pods of the Theobroma cacao tree — a name that literally means 'food of the gods' — were so highly valued that they were often used as currency. Furthermore, cacao was prepared as a bitter, frothy beverage, commonly consumed during religious ceremonies or offered to warriors before battle for its perceived energising properties.",
+    "It was not until the Spanish conquest of the Americas in the 16th century that cacao was introduced to Europe. Initially met with mixed reactions due to its bitter taste, it eventually gained popularity once European palates modified it with sugar, cinnamon, and milk. Over time, chocolate evolved from a ritualistic drink into a commercial luxury enjoyed by the European elite.",
+    "The Industrial Revolution marked a turning point in the accessibility and form of chocolate. Innovations in processing, such as the invention of the cocoa press and conching methods, allowed for the mass production of solid chocolate. This not only reduced costs but also paved the way for the creation of the first chocolate bars and filled confections that would dominate 19th- and 20th-century markets.",
+    "Today, chocolate remains one of the most beloved confections in the world, yet its production and cultural symbolism continue to evolve. Modern concerns about ethical sourcing, child labour, and environmental impact have led to a growing demand for fair trade practices. Thus, chocolate’s journey from sacred Mesoamerican beverage to global commodity encapsulates not only technological progress but also the shifting values of the societies that consume it."
+  ],
+  "questions": [
+    {
+      "id": 1,
+      "question": "What does the text suggest about the significance of cacao in ancient Mesoamerican societies?",
+      "options": [
+        "It was used primarily for decoration.",
+        "It served both spiritual and economic purposes.",
+        "It was consumed mainly by children.",
+        "It was considered a daily staple food."
+      ],
+      "answer": "It served both spiritual and economic purposes."
+    },
+    {
+      "id": 2,
+      "question": "Why did early European consumers initially dislike chocolate?",
+      "options": [
+        "They found it too expensive.",
+        "It was not sweetened to their taste.",
+        "They preferred coffee and tea.",
+        "They associated it with pagan rituals."
+      ],
+      "answer": "It was not sweetened to their taste."
+    },
+    {
+      "id": 3,
+      "question": "What innovation allowed chocolate to become widely accessible?",
+      "options": [
+        "The discovery of new cacao varieties",
+        "The colonisation of South America",
+        "The development of processing machinery",
+        "The increase in sugar production"
+      ],
+      "answer": "The development of processing machinery"
+    },
+    {
+      "id": 4,
+      "question": "According to the text, what impact did industrialisation have on chocolate?",
+      "options": [
+        "It made chocolate less popular among the elite.",
+        "It standardised the taste across Europe.",
+        "It enabled the invention of sweetened drinks.",
+        "It transformed chocolate into an affordable mass product."
+      ],
+      "answer": "It transformed chocolate into an affordable mass product."
+    },
+    {
+      "id": 5,
+      "question": "What contemporary issue related to chocolate does the text highlight?",
+      "options": [
+        "Its decreasing popularity among youth",
+        "The reduction in cacao tree biodiversity",
+        "Ethical concerns in its production",
+        "The decline of artisanal chocolate-making"
+      ],
+      "answer": "Ethical concerns in its production"
+    },
+    {
+      "id": 6,
+      "question": "Which of the following best describes the overall progression of chocolate according to the text?",
+      "options": [
+        "From sacred ritual to global controversy",
+        "From agricultural product to religious symbol",
+        "From elite beverage to forgotten tradition",
+        "From bitter medicine to rare delicacy"
+      ],
+      "answer": "From sacred ritual to global controversy"
+    }
+  ]
+}

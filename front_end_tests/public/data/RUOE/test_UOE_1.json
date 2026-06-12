@@ -1,0 +1,14 @@
+{
+  "title": "Legal fight hits music pirates",
+  "text": [
+    "The global recording industry has launched its largest wave of legal ",
+    { "id": 1, 
+    "options": ["cases", "moves", "battles", "actions"], 
+    "answer": "actions" },
+    " against people suspected of sharing music files on the internet. The latest move by the International Federation of the Phonographic Industry (IFPI) ",
+    { "id": 2, "options": ["pointed", "targeted", "focused", "marked"], "answer": "targeted" },
+    " 2,100 alleged uploaders using peer-to-peer (P2P) networks in 16 nations ",
+    { "id": 3, "options": ["including", "as", "like", "between"], "answer": "including" },
+    " the UK, France, Germany and Italy."
+  ]
+}

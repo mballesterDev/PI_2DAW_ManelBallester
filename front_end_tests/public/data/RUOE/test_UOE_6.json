@@ -1,0 +1,20 @@
+{
+  "title": "The Importance of Sleep",
+  "options": [
+    "This is particularly true for teenagers.",
+    "As a result, they may suffer academically.",
+    "Some researchers suggest starting school later.",
+    "This creates a gap in concentration levels."
+  ],
+  "text": [
+    "Many people underestimate the value of sleep in daily life. ",
+    { "id": "0", "answer": "This is particularly true for teenagers." },
+    " They often go to bed late and still have to wake up early for school. ",
+    { "id": "1", "answer": "As a result, they may suffer academically." },
+    " Lack of rest affects memory and attention. ",
+    { "id": "2", "answer": "This creates a gap in concentration levels." },
+    " To address this issue, ",
+    { "id": "3", "answer": "Some researchers suggest starting school later." },
+    " This might help align with students' natural sleep rhythms."
+  ]
+}

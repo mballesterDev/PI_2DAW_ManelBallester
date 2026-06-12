@@ -1,0 +1,23 @@
+{
+  "title": "Listening Part 2 - Fill the Gaps",
+  "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  "text": [
+    "Richard and Matthew abandoned their boat because they couldn’t get past a ",
+    { "id": "1", "answer": "rapids" },
+    ". They decided to walk through the jungle as far as the ",
+    { "id": "2", "answer": "clearing" },
+    " marked on the map. Richard says that during the walk, they were always both ",
+    { "id": "3", "answer": "tired" },
+    ". The first sign of human activity that they found was a ",
+    { "id": "4", "answer": "fire" },
+    ". In a deserted camp, they found some soup made from unusual ",
+    { "id": "5", "answer": "roots and leaves" },
+    ". Richard says that by the time they had reached the camp, they were lacking in ",
+    { "id": "6", "answer": "energy" },
+    ". Richard says that after the meal, they began to feel ",
+    { "id": "7", "answer": "hopeful" },
+    " about what they’d done. Before leaving the camp, they left the sum of ",
+    { "id": "8", "answer": "money" },
+    " to thank their host."
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "title": "Listening Part 1 - Multiple Choice",
+  "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  "questions": [
+    {
+      "id": 1,
+      "text": "What is the woman planning to do next weekend?",
+      "options": ["Go hiking", "Visit her family", "Work overtime"],
+      "answer": "Visit her family"
+    },
+    {
+      "id": 2,
+      "text": "What problem did the man have with his trip?",
+      "options": ["Lost his luggage", "Missed his flight", "Bad weather"],
+      "answer": "Lost his luggage"
+    }
+  ]
+}

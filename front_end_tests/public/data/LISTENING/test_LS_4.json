@@ -1,0 +1,44 @@
+{
+  "title": "Listening Part 4 - Meeting Celebrities",
+  "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  "task1": {
+    "instructions": "For questions 21–25, choose from the list A–H what each speaker says about coming into contact with a celebrity.",
+    "options": [
+      "A I failed to recognise the person.",
+      "B I realised I had forgotten something.",
+      "C I insisted on something.",
+      "D I was upset by personal criticism.",
+      "E I had been given incorrect information.",
+      "F I was pleasantly surprised.",
+      "G I refused a request.",
+      "H I was amused by something."
+    ],
+    "questions": [
+      { "id": "21", "speaker": "Speaker 1", "answer": "F" },
+      { "id": "22", "speaker": "Speaker 2", "answer": "C" },
+      { "id": "23", "speaker": "Speaker 3", "answer": "A" },
+      { "id": "24", "speaker": "Speaker 4", "answer": "D" },
+      { "id": "25", "speaker": "Speaker 5", "answer": "B" }
+    ]
+  },
+  "task2": {
+    "instructions": "For questions 26–30, choose from the list A–H the opinion each speaker gives about the celebrity.",
+    "options": [
+      "A He/She became more agitated than necessary.",
+      "B He/She enjoyed causing trouble.",
+      "C He/She appeared totally at ease.",
+      "D He/She expected too much privacy.",
+      "E He/She seemed insincere.",
+      "F He/She wasn’t able to cope with fame.",
+      "G He/She talked down to me.",
+      "H He/She eventually accepted the regulations."
+    ],
+    "questions": [
+      { "id": "26", "speaker": "Speaker 1", "answer": "C" },
+      { "id": "27", "speaker": "Speaker 2", "answer": "G" },
+      { "id": "28", "speaker": "Speaker 3", "answer": "D" },
+      { "id": "29", "speaker": "Speaker 4", "answer": "A" },
+      { "id": "30", "speaker": "Speaker 5", "answer": "H" }
+    ]
+  }
+}

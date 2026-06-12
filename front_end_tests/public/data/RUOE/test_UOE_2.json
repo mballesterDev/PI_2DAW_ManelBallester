@@ -1,0 +1,11 @@
+{
+  "title": "Part 2 – Fill in the blanks",
+  "text": [
+    "The weather was so ",
+    { "id": "q1", "answer": "bad" },
+    " that we had to cancel the trip. ",
+    "Nobody expected it to get ",
+    { "id": "q2", "answer": "worse" },
+    " during the afternoon."
+  ]
+}

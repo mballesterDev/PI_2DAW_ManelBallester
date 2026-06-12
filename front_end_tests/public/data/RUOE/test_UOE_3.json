@@ -1,0 +1,10 @@
+{
+  "title": "Training Sports Champions - Word Formation",
+  "text": [
+    "What are the abilities that a ",
+    { "id": "0", "base": "ambition", "answer": "ambitious" },
+    " sports person needs? To guarantee that opponents can be ",
+    { "id": "1", "base": "surpass", "answer": "surpassed" },
+    ", speed, stamina and agility are essential..."
+  ]
+}
