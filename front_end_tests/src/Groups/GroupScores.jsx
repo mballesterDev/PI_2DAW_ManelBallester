@@ -1,28 +1,27 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 
-const maxScoresBySection = {
-  reading: 62,
-  listening: 30,
-  writing: 20,
-  speaking: 20,
+const GRADE_THRESHOLDS = {
+  A: { min: 90, text: "A (Distinction)" },
+  B: { min: 80, text: "B (Merit)" },
+  C: { min: 60, text: "C (Pass)" },
 };
 
-const maxScoresByPart = {
-  reading: { 1: 8, 2: 8, 3: 8, 4: 12, 5: 12, 6: 8, 7: 6 },
-  listening: { 1: 6, 2: 8, 3: 6, 4: 10 },
-  writing: { 1: 10, 2: 10 },
-  speaking: { 1: 10, 2: 10 },
-};
+function getGrade(percentage) {
+  if (percentage >= GRADE_THRESHOLDS.A.min) return GRADE_THRESHOLDS.A;
+  if (percentage >= GRADE_THRESHOLDS.B.min) return GRADE_THRESHOLDS.B;
+  if (percentage >= GRADE_THRESHOLDS.C.min) return GRADE_THRESHOLDS.C;
+  return { min: 0, text: "Fail" };
+}
 
 function scoreColor(score, max) {
   if (!score || max === 0) return "text-gray-500";
-  return score / max >= 0.6 ? "text-green-600 font-semibold" : "text-red-600 font-semibold";
+  return score / max >= 0.5 ? "text-green-600 font-semibold" : "text-red-600 font-semibold";
 }
 
 function formatScore(score, max) {
   if (score === null || score === undefined || max === 0) return "No data";
-  return `${score.toFixed(2)} / ${max}`;
+  return `${score.toFixed(1)} / ${max}`;
 }
 
 export default function GroupScores() {
@@ -39,6 +38,7 @@ export default function GroupScores() {
   const [searchUser, setSearchUser] = useState("");
   const [newUsername, setNewUsername] = useState("");
   const [addUserMessage, setAddUserMessage] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState("all");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -107,6 +107,34 @@ export default function GroupScores() {
       .catch(() => setAddUserMessage("❌ Error adding user"));
   };
 
+  // Calcular nota global para un nivel específico de un usuario
+  const calculateGlobalScore = (levelData) => {
+    let totalPercentage = 0;
+    let validSections = 0;
+    
+    for (const [section, sectionData] of Object.entries(levelData)) {
+      const score = sectionData.score;
+      const max = sectionData.max_score;
+      if (score !== undefined && max > 0) {
+        const percentage = (score / max) * 100;
+        totalPercentage += percentage;
+        validSections++;
+      }
+    }
+    
+    if (validSections === 0) return null;
+    
+    const globalPercentage = totalPercentage / validSections;
+    const gradeInfo = getGrade(globalPercentage);
+    
+    return {
+      percentage: globalPercentage.toFixed(1),
+      grade: gradeInfo.text,
+      isPass: globalPercentage >= 60
+    };
+  };
+
+  // Filtrar usuarios por nombre
   const filteredData =
     data?.filter((member) =>
       member.username.toLowerCase().includes(searchUser.toLowerCase())
@@ -135,7 +163,6 @@ export default function GroupScores() {
   return (
     <div className="flex justify-center items-start min-h-screen pt-12 px-4">
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-        {/* Header con gradiente */}
         <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-6 py-4">
           <div className="flex items-center gap-3">
             <button
@@ -150,7 +177,6 @@ export default function GroupScores() {
           </div>
         </div>
 
-        {/* Contenido */}
         <div className="p-6">
           {/* Añadir usuario */}
           <div className="flex flex-col sm:flex-row gap-3 mb-5">
@@ -172,15 +198,26 @@ export default function GroupScores() {
             <p className="mb-4 text-sm text-center">{addUserMessage}</p>
           )}
 
-          {/* Filtro */}
-          <div className="mb-6">
+          {/* Filtro y selector de nivel */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <input
               type="text"
               placeholder="🔍 Filter by username..."
               value={searchUser}
               onChange={(e) => setSearchUser(e.target.value)}
-              className="w-full sm:w-80 px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
+              className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
             />
+            <select
+              value={selectedLevel}
+              onChange={(e) => setSelectedLevel(e.target.value)}
+              className="px-4 py-2.5 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
+            >
+              <option value="all">All Levels</option>
+              <option value="B1">Level B1</option>
+              <option value="B2">Level B2</option>
+              <option value="C1">Level C1</option>
+              <option value="C2">Level C2</option>
+            </select>
           </div>
 
           {filteredData.length === 0 ? (
@@ -191,7 +228,10 @@ export default function GroupScores() {
           ) : (
             <div className="space-y-4">
               {filteredData.map((member) => {
-                const hasResults = member.sections && Object.keys(member.sections).length > 0;
+                // Obtener los niveles del usuario (scores_by_level es un objeto)
+                const userLevels = member.scores_by_level || {};
+                const availableLevels = Object.keys(userLevels);
+                const hasResults = availableLevels.length > 0;
                 const isOpen = openUsers.includes(member.username);
 
                 return (
@@ -230,56 +270,78 @@ export default function GroupScores() {
                           isOpen ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
                         }`}
                       >
-                        <div className="p-4 pt-0 space-y-4">
-                          {Object.entries(member.sections).map(([sectionName, sectionData]) => {
-                            const sectionScore = sectionData?.score ?? null;
-                            const sectionMax = maxScoresBySection[sectionName.toLowerCase()] ?? 0;
-
+                        <div className="p-4 pt-0 space-y-6">
+                          {availableLevels.map((level) => {
+                            // Si hay un filtro de nivel, solo mostrar ese nivel
+                            if (selectedLevel !== "all" && level !== selectedLevel) return null;
+                            
+                            const levelData = userLevels[level];
+                            const globalScore = calculateGlobalScore(levelData);
+                            
                             return (
-                              <div
-                                key={sectionName}
-                                className="bg-gray-50 rounded-xl p-4 border border-gray-200"
-                              >
-                                <h4 className="text-md font-bold text-gray-800 mb-3 flex items-center justify-between">
-                                  <span className="capitalize flex items-center gap-2">
-                                    {sectionName === "reading" && "📖"}
-                                    {sectionName === "listening" && "🎧"}
-                                    {sectionName === "writing" && "✍️"}
-                                    {sectionName === "speaking" && "🎙️"}
-                                    {sectionName}
-                                  </span>
-                                  <span className={scoreColor(sectionScore, sectionMax)}>
-                                    {formatScore(sectionScore, sectionMax)}
-                                  </span>
-                                </h4>
+                              <div key={level} className="border border-gray-200 rounded-xl overflow-hidden">
+                                <div className="bg-gradient-to-r from-gray-100 to-gray-50 px-4 py-3 border-b border-gray-200">
+                                  <div className="flex justify-between items-center">
+                                    <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                      <span className="text-xl">📚</span>
+                                      Level {level}
+                                    </h3>
+                                    {globalScore && (
+                                      <div className={`px-3 py-1 rounded-lg text-center ${
+                                        globalScore.isPass ? 'bg-green-100' : 'bg-red-100'
+                                      }`}>
+                                        <div className={`text-sm font-bold ${globalScore.isPass ? 'text-green-700' : 'text-red-700'}`}>
+                                          {globalScore.percentage}%
+                                        </div>
+                                        <div className={`text-xs font-semibold ${globalScore.isPass ? 'text-green-600' : 'text-red-600'}`}>
+                                          {globalScore.grade}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                
+                                <div className="p-4 space-y-4">
+                                  {Object.entries(levelData).map(([sectionName, sectionData]) => {
+                                    const sectionScore = sectionData.score;
+                                    const sectionMax = sectionData.max_score;
+                                    const passedSection = sectionMax > 0 ? sectionScore / sectionMax >= 0.5 : false;
 
-                                <ul className="space-y-2">
-                                  {sectionData?.parts ? (
-                                    Object.entries(sectionData.parts).map(([part, partData]) => {
-                                      const partScore = partData?.score ?? null;
-                                      const partMax = maxScoresByPart[sectionName.toLowerCase()]?.[part] ?? 0;
-                                      const passed = partScore / partMax >= 0.6;
-
-                                      return (
-                                        <li key={part} className="flex items-center justify-between py-1 border-b border-gray-100 last:border-0">
-                                          <span className="text-sm text-gray-600">
-                                            Part {part}
-                                          </span>
+                                    return (
+                                      <div key={sectionName} className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                        <div className="flex justify-between items-center mb-3">
                                           <div className="flex items-center gap-2">
-                                            <span className={scoreColor(partScore, partMax)}>
-                                              {partScore?.toFixed(2) ?? "0.00"} / {partMax}
+                                            <span className="text-xl">
+                                              {sectionName === "reading" && "📖"}
+                                              {sectionName === "listening" && "🎧"}
+                                              {sectionName === "writing" && "✍️"}
+                                              {sectionName === "speaking" && "🎙️"}
+                                              {sectionName === "use_of_english" && "📝"}
                                             </span>
-                                            <span className="text-base">
-                                              {passed ? "✅" : "❌"}
+                                            <h4 className="text-md font-bold text-gray-800 capitalize">
+                                              {sectionName.replace("_", " ")}
+                                            </h4>
+                                          </div>
+                                          <div className="text-right">
+                                            <span className={`text-sm font-bold ${scoreColor(sectionScore, sectionMax)}`}>
+                                              {formatScore(sectionScore, sectionMax)}
+                                            </span>
+                                            <span className="ml-2">
+                                              {passedSection ? "✅" : "❌"}
                                             </span>
                                           </div>
-                                        </li>
-                                      );
-                                    })
-                                  ) : (
-                                    <p className="text-xs text-gray-400 italic">No parts recorded.</p>
-                                  )}
-                                </ul>
+                                        </div>
+
+                                        <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                                          <div 
+                                            className={`h-2 rounded-full transition-all duration-500 ${passedSection ? 'bg-green-500' : 'bg-red-500'}`}
+                                            style={{ width: `${sectionMax > 0 ? (sectionScore / sectionMax) * 100 : 0}%` }}
+                                          ></div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
                               </div>
                             );
                           })}
