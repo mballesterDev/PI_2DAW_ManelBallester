@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import Avg
+from django.db.models import Avg, Sum
 from django.contrib.auth import get_user_model
 from .models import Group
 from .serializers import GroupSerializer
@@ -10,76 +10,18 @@ from results.models import TestResult
 
 User = get_user_model()
 
-# ✅ Máximos oficiales por nivel B2/C1
-MAX_SCORES_BY_PART = {
-    "reading": {1: 8, 2: 8, 3: 8, 5: 12, 6: 8, 7: 6},
-    "listening": {1: 6, 2: 8, 3: 6, 4: 10},
-    "writing": {},
-    "speaking": {},
-}
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def group_scores(request, group_id):
-    level = request.GET.get("level")
-
-    try:
-        group = Group.objects.get(id=group_id)
-    except Group.DoesNotExist:
-        return Response({"error": "Group not found"}, status=404)
-
-    members = group.members.all()
-    data = []
-
-    for member in members:
-        filter_args = {"user": member}
-        if level:
-            filter_args["level"] = level
-
-        section_averages = (
-            TestResult.objects
-            .filter(**filter_args)
-            .values('section')
-            .annotate(average_score=Avg('score'))
-        )
-
-        sections = {}
-        for sec_avg in section_averages:
-            section_name = sec_avg['section']
-            avg_score = sec_avg['average_score'] or 0
-
-            part_averages = (
-                TestResult.objects
-                .filter(**filter_args, section=section_name)
-                .values('part')
-                .annotate(average_score=Avg('score'))
-            )
-
-            parts = {}
-            for part_avg in part_averages:
-                part = int(part_avg['part'])
-                part_score = part_avg['average_score'] or 0
-                max_part_score = MAX_SCORES_BY_PART.get(section_name, {}).get(part, 0)
-                parts[str(part)] = {
-                    "score": round(part_score, 2),
-                    "max": max_part_score
-                }
-
-            max_section_score = sum(p["max"] for p in parts.values())
-            sections[section_name] = {
-                "score": round(avg_score, 2),
-                "max_score": max_section_score,
-                "parts": parts
-            }
-
-        data.append({
-            "username": member.username,
-            "sections": sections
-        })
-
-    return Response(data)
+# ✅ Importar la configuración completa de exámenes Cambridge
+from results.views import CAMBRIDGE_EXAM_CONFIG
 
 
+# ✅ Función auxiliar para obtener config de nivel
+def get_level_config(level):
+    return CAMBRIDGE_EXAM_CONFIG.get(level, {})
+
+
+# ============================================
+# GRUPOS - LISTAR Y CREAR (FUNCIONALIDAD ORIGINAL)
+# ============================================
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def groups_list_create(request):
@@ -98,6 +40,9 @@ def groups_list_create(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# ============================================
+# AÑADIR USUARIO AL GRUPO (FUNCIONALIDAD ORIGINAL)
+# ============================================
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_user_to_group(request, group_id):
@@ -120,3 +65,90 @@ def add_user_to_group(request, group_id):
 
     group.members.add(user_to_add)
     return Response({"success": f"User {username} added to group"})
+
+
+# ============================================
+# PUNTUACIONES DEL GRUPO (MODIFICADO CON NIVELES)
+# ============================================
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def group_scores(request, group_id):
+    """
+    Devuelve las puntuaciones de los miembros del grupo agrupadas por nivel y sección.
+    Si no se especifica nivel, devuelve todos los niveles disponibles.
+    """
+    # Obtener nivel de los parámetros de la URL (opcional)
+    requested_level = request.GET.get("level")
+    
+    try:
+        group = Group.objects.get(id=group_id)
+    except Group.DoesNotExist:
+        return Response({"error": "Group not found"}, status=404)
+
+    members = group.members.all()
+    data = []
+
+    for member in members:
+        # Obtener todos los resultados del miembro
+        results = TestResult.objects.filter(user=member)
+        
+        if requested_level:
+            results = results.filter(level=requested_level)
+        
+        # Agrupar por nivel y sección
+        scores_by_level = {}
+        
+        for result in results:
+            level = result.level
+            section = result.section
+            part = result.part
+            score = result.score
+            
+            # Obtener configuración del nivel
+            level_config = get_level_config(level)
+            if not level_config:
+                continue
+            
+            # Inicializar estructura para este nivel si no existe
+            if level not in scores_by_level:
+                scores_by_level[level] = {}
+            
+            # Inicializar estructura para esta sección si no existe
+            if section not in scores_by_level[level]:
+                scores_by_level[level][section] = {
+                    'score': 0,
+                    'max_score': 0,
+                    'parts': {}
+                }
+            
+            # Obtener max_score de la parte desde la configuración
+            parts_config = level_config.get('parts', {}).get(section, {})
+            max_part_score = parts_config.get(str(part), 0)
+            
+            # Acumular puntuación de la sección
+            scores_by_level[level][section]['score'] += score
+            scores_by_level[level][section]['max_score'] += max_part_score
+            
+            # Guardar puntuación por parte
+            if str(part) not in scores_by_level[level][section]['parts']:
+                scores_by_level[level][section]['parts'][str(part)] = {
+                    'score': 0,
+                    'max': 0
+                }
+            
+            scores_by_level[level][section]['parts'][str(part)]['score'] += score
+            scores_by_level[level][section]['parts'][str(part)]['max'] = max_part_score
+        
+        # Redondear puntuaciones
+        for level, level_data in scores_by_level.items():
+            for section, section_data in level_data.items():
+                section_data['score'] = round(section_data['score'], 2)
+                for part, part_data in section_data['parts'].items():
+                    part_data['score'] = round(part_data['score'], 2)
+        
+        data.append({
+            "username": member.username,
+            "scores_by_level": scores_by_level
+        })
+    
+    return Response(data)
